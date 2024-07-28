@@ -1,0 +1,41 @@
+package main
+
+import (
+	"github.com/maxgio92/stacktrace-graph-go/internal/graph"
+	"github.com/maxgio92/stacktrace-graph-go/internal/trace"
+)
+
+var (
+	trace1 = trace.StackTrace{[]string{"main", "foo", "qui", "x"}, 4}
+	trace2 = trace.StackTrace{[]string{"main", "bar", "quo"}, 2}
+	trace3 = trace.StackTrace{[]string{"main", "foo"}, 3}
+	trace4 = trace.StackTrace{[]string{"main", "foo", "qua", "y"}, 4}
+	traces = []trace.StackTrace{trace1, trace2, trace3, trace4}
+)
+
+func main() {
+	var sampleCountTotal int
+	for _, v := range traces {
+		sampleCountTotal += v.Samples
+	}
+
+	g := graph.NewGraph()
+	for kt, _ := range traces {
+		for ks, sym := range traces[kt].Syms {
+			parent := ""
+			if ks > 0 {
+				parent = traces[kt].Syms[ks-1]
+			}
+
+			// If it's the traced function, that is, the last symbol/IP in the stack trace,
+			// update also its weight.
+			if ks == len(traces[kt].Syms)-1 {
+				g.UpsertNode(sym, parent,
+					float32(traces[kt].Samples)/float32(sampleCountTotal),
+				)
+			} else {
+				g.UpsertNode(sym, parent)
+			}
+		}
+	}
+}
