@@ -1,16 +1,18 @@
 package main
 
 import (
+	"fmt"
 	"github.com/maxgio92/stacktrace-graph-go/internal/graph"
 	"github.com/maxgio92/stacktrace-graph-go/internal/trace"
 )
 
 var (
 	trace1 = trace.StackTrace{[]string{"main", "foo", "qui", "x"}, 4}
+	trace5 = trace.StackTrace{[]string{"main", "foo", "quo"}, 2}
 	trace2 = trace.StackTrace{[]string{"main", "bar", "quo"}, 2}
 	trace3 = trace.StackTrace{[]string{"main", "foo"}, 3}
-	trace4 = trace.StackTrace{[]string{"main", "foo", "qua", "y"}, 4}
-	traces = []trace.StackTrace{trace1, trace2, trace3, trace4}
+	trace4 = trace.StackTrace{[]string{"main", "foo", "qua", "y"}, 5}
+	traces = []trace.StackTrace{trace1, trace2, trace3, trace4, trace5}
 )
 
 func main() {
@@ -38,4 +40,5 @@ func main() {
 			}
 		}
 	}
+	fmt.Println(g)
 }

@@ -39,7 +39,7 @@ func (g *Graph) UpsertNode(k, parent string, weight ...float32) {
 	}
 	g.nodes[key(k)].Parent = key(parent)
 	if len(weight) > 0 {
-		g.nodes[key(k)].Weight = weight[0]
+		g.nodes[key(k)].Weight += weight[0]
 	}
 	g.lock.Unlock()
 
@@ -56,6 +56,6 @@ func (g *Graph) UpsertNode(k, parent string, weight ...float32) {
 	}
 
 	g.lock.Lock()
-	g.nodes[key(parent)].Children = append(g.Node(parent).Children, key(k))
+	g.nodes[key(parent)].Children = append(g.nodes[key(parent)].Children, key(k))
 	g.lock.Unlock()
 }
