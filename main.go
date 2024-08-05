@@ -24,7 +24,7 @@ func main() {
 	g := graph.NewGraph()
 	for kt, _ := range traces {
 		for ks, sym := range traces[kt].Syms {
-			parent := ""
+			var parent string
 			if ks > 0 {
 				parent = traces[kt].Syms[ks-1]
 			}
@@ -32,9 +32,7 @@ func main() {
 			// If it's the traced function, that is, the last symbol/IP in the stack trace,
 			// update also its weight.
 			if ks == len(traces[kt].Syms)-1 {
-				g.UpsertNode(sym, parent,
-					float32(traces[kt].Samples)/float32(sampleCountTotal),
-				)
+				g.UpsertNode(sym, parent, float32(traces[kt].Samples)/float32(sampleCountTotal))
 			} else {
 				g.UpsertNode(sym, parent)
 			}
