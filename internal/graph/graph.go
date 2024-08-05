@@ -6,7 +6,7 @@ type key string
 
 type Node struct {
 	Parent   key
-	Children []key // TODO: transform to map[string]int to remove duplicates
+	Children map[key]int
 	Weight   float32
 }
 
@@ -51,11 +51,11 @@ func (g *Graph) UpsertNode(k, parent string, weight ...float32) {
 	}
 	if g.Node(parent).Children == nil {
 		g.lock.Lock()
-		g.nodes[key(parent)].Children = make([]key, 0)
+		g.nodes[key(parent)].Children = make(map[key]int, 0)
 		g.lock.Unlock()
 	}
 
 	g.lock.Lock()
-	g.nodes[key(parent)].Children = append(g.nodes[key(parent)].Children, key(k))
+	g.nodes[key(parent)].Children[key(k)]++
 	g.lock.Unlock()
 }
