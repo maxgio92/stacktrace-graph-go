@@ -1,18 +1,16 @@
-package main
+package graph
 
 import (
 	"fmt"
-	"github.com/maxgio92/stacktrace-graph-go/internal/graph"
-	"github.com/maxgio92/stacktrace-graph-go/internal/trace"
 )
 
 var (
-	trace1 = trace.StackTrace{[]string{"main", "foo", "qux", "grault"}, 4}
-	trace5 = trace.StackTrace{[]string{"main", "foo", "quux"}, 2}
-	trace2 = trace.StackTrace{[]string{"main", "bar", "quux"}, 2}
-	trace3 = trace.StackTrace{[]string{"main", "foo"}, 3}
-	trace4 = trace.StackTrace{[]string{"main", "foo", "corge", "garply"}, 5}
-	traces = []trace.StackTrace{trace1, trace2, trace3, trace4, trace5}
+	trace1 = StackTrace{[]string{"main", "foo", "qux", "grault"}, 4}
+	trace5 = StackTrace{[]string{"main", "foo", "quux"}, 2}
+	trace2 = StackTrace{[]string{"main", "bar", "quux"}, 2}
+	trace3 = StackTrace{[]string{"main", "foo"}, 3}
+	trace4 = StackTrace{[]string{"main", "foo", "corge", "garply"}, 5}
+	traces = []StackTrace{trace1, trace2, trace3, trace4, trace5}
 )
 
 func main() {
@@ -21,7 +19,7 @@ func main() {
 		sampleCountTotal += v.Samples
 	}
 
-	g := graph.NewGraph()
+	g := NewGraph()
 	for kt, _ := range traces {
 		for ks, sym := range traces[kt].Syms {
 			var parent string

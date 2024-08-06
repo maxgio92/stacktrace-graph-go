@@ -1,6 +1,8 @@
 package graph
 
-import "sync"
+import (
+	"sync"
+)
 
 type key string
 
