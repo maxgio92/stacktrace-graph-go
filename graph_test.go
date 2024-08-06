@@ -1,7 +1,7 @@
 package graph
 
 import (
-	"fmt"
+	"testing"
 )
 
 var (
@@ -13,7 +13,7 @@ var (
 	traces = []StackTrace{trace1, trace2, trace3, trace4, trace5}
 )
 
-func main() {
+func TestUpsertChildren(t *testing.T) {
 	var sampleCountTotal int
 	for _, v := range traces {
 		sampleCountTotal += v.Samples
@@ -36,5 +36,22 @@ func main() {
 			}
 		}
 	}
-	fmt.Println(g)
+
+	testCases := []struct {
+		name string
+		want  int
+	}{
+		{name: "main", want: 2},
+		{name: "foo", want: 3},
+		{name: "bar", want: 1},
+		{name: "qux", want: 1},
+		{name: "quux", want: 0},
+	}
+
+	for _, tt := range testCases {
+		children := g.Node(tt.name).Children
+		if len(children) != tt.want {
+			t.Errorf("got %v, want %v", children, tt.want)
+		}
+	}
 }
