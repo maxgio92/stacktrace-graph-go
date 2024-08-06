@@ -14,12 +14,57 @@ var (
 )
 
 func TestUpsertChildren(t *testing.T) {
+	g := NewGraph()
+	fillGraph(g, traces)
+
+	testCases := []struct {
+		name string
+		want int
+	}{
+		{name: "main", want: 2},
+		{name: "foo", want: 3},
+		{name: "bar", want: 1},
+		{name: "qux", want: 1},
+		{name: "quux", want: 0},
+	}
+
+	for _, tt := range testCases {
+		children := g.Node(tt.name).Children
+		if len(children) != tt.want {
+			t.Errorf("for %v got %v, want %v", tt.name, len(children), tt.want)
+		}
+	}
+}
+
+func TestUpsertParents(t *testing.T) {
+	g := NewGraph()
+	fillGraph(g, traces)
+
+	testCases := []struct {
+		name string
+		want int
+	}{
+		{name: "main", want: 1},
+		{name: "foo", want: 1},
+		{name: "bar", want: 1},
+		{name: "qux", want: 1},
+		{name: "quux", want: 2},
+	}
+
+	for _, tt := range testCases {
+		parents := g.Node(tt.name).Parents
+		if len(parents) != tt.want {
+			t.Errorf("for %v got %v, want %v", tt.name, len(parents), tt.want)
+		}
+	}
+}
+
+func fillGraph(g *Graph, traces []StackTrace) {
 	var sampleCountTotal int
 	for _, v := range traces {
 		sampleCountTotal += v.Samples
 	}
 
-	g := NewGraph()
 	for kt, _ := range traces {
 		for ks, sym := range traces[kt].Syms {
 			var parent string
@@ -34,24 +79,6 @@ func TestUpsertChildren(t *testing.T) {
 			} else {
 				g.UpsertNode(sym, parent)
 			}
-		}
-	}
-
-	testCases := []struct {
-		name string
-		want  int
-	}{
-		{name: "main", want: 2},
-		{name: "foo", want: 3},
-		{name: "bar", want: 1},
-		{name: "qux", want: 1},
-		{name: "quux", want: 0},
-	}
-
-	for _, tt := range testCases {
-		children := g.Node(tt.name).Children
-		if len(children) != tt.want {
-			t.Errorf("got %v, want %v", children, tt.want)
 		}
 	}
 }

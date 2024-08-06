@@ -7,8 +7,8 @@ import (
 type key string
 
 type Node struct {
-	Parent   key
-	Children map[key]int
+	Parents  map[key]int8
+	Children map[key]int8
 	Weight   float32
 }
 
@@ -39,7 +39,12 @@ func (g *Graph) UpsertNode(k, parent string, weight ...float32) {
 	if g.nodes[key(k)] == nil {
 		g.nodes[key(k)] = new(Node)
 	}
-	g.nodes[key(k)].Parent = key(parent)
+
+	if g.nodes[key(k)].Parents == nil {
+		g.nodes[key(k)].Parents = make(map[key]int8, 0)
+	}
+
+	g.nodes[key(k)].Parents[key(parent)]++
 	if len(weight) > 0 {
 		g.nodes[key(k)].Weight += weight[0]
 	}
@@ -53,7 +58,7 @@ func (g *Graph) UpsertNode(k, parent string, weight ...float32) {
 	}
 	if g.Node(parent).Children == nil {
 		g.lock.Lock()
-		g.nodes[key(parent)].Children = make(map[key]int, 0)
+		g.nodes[key(parent)].Children = make(map[key]int8, 0)
 		g.lock.Unlock()
 	}
 
